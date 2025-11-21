@@ -21,6 +21,7 @@ void handle_received_report(const uint8_t* report, int len, uint16_t interface, 
 void do_handle_received_report(const uint8_t* report, int len, uint16_t interface, uint8_t external_report_id = 0);
 void handle_received_midi(uint8_t hub_port, uint8_t* midi_msg);
 void set_input_state(uint32_t usage, int32_t state_raw, int32_t state_scaled, uint8_t hub_port = 0);
+void inject_input(uint32_t usage, int32_t value);
 
 void extra_init();
 void read_report(bool* new_report, bool* tick);

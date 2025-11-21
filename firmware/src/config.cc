@@ -1113,6 +1113,11 @@ void handle_set_report1(uint8_t report_id, uint8_t const* buffer, uint16_t bufsi
                     my_mutex_exit(MutexId::QUIRKS);
                     break;
                 }
+                case ConfigCommand::INJECT_INPUT: {
+                    inject_input_cmd_t* cmd = (inject_input_cmd_t*) config_buffer->data;
+                    inject_input(cmd->usage, cmd->value);
+                    break;
+                }
                 default:
                     last_config_command = ConfigCommand::INVALID_COMMAND;
                     break;

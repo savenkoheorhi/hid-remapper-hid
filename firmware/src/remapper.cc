@@ -107,6 +107,7 @@ uint32_t processing_time;
 bool expression_valid[NEXPRESSIONS] = { false };
 
 std::unordered_map<uint32_t, int32_t> monitor_input_state;
+std::unordered_map<uint32_t, int32_t> injected_state;
 uint8_t monitor_usages_queued = 0;
 monitor_report_t monitor_report[2] = { { .report_id = REPORT_ID_MONITOR }, { .report_id = REPORT_ID_MONITOR } };
 uint8_t monitor_report_idx = 0;
@@ -1288,6 +1289,18 @@ void process_mapping(bool auto_repeat) {
                     }
                 }
             }
+
+            if (injected_state.count(target)) {
+                int32_t injected = injected_state[target];
+                if (our_usages_flat[target].size == 1) {
+                    if (injected) {
+                        value = 1 * our_usages_flat[target].scaling / 1000;
+                    }
+                } else {
+                    value += injected;
+                }
+            }
+
             // we don't currently have any absolute usages that can be negative
             if ((value < 0) && !register_target) {
                 value = 0;
@@ -1476,6 +1489,17 @@ void monitor_usage(uint32_t usage, int32_t value, uint8_t hub_port) {
         .value = value,
         .hub_port = hub_port,
     };
+}
+
+void inject_input(uint32_t usage, int32_t value) {
+    if (our_usages_flat.count(usage)) {
+        usage_def_t& our_usage = our_usages_flat[usage];
+        if (our_usage.is_relative) {
+            accumulated[usage] += value;
+        } else {
+            injected_state[usage] = value;
+        }
+    }
 }
 
 inline void read_input(const uint8_t* report, int len, uint32_t source_usage, const usage_def_t& their_usage, uint8_t interface_idx) {

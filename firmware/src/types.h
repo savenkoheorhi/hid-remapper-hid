@@ -32,6 +32,7 @@ enum class ConfigCommand : int8_t {
     CLEAR_QUIRKS = 23,
     ADD_QUIRK = 24,
     GET_QUIRK = 25,
+    INJECT_INPUT = 26,
 };
 
 struct usage_def_t {
@@ -432,6 +433,11 @@ struct __attribute__((packed)) monitor_report_t {
 
 struct __attribute__((packed)) uint16_val_t {
     uint16_t val;
+};
+
+struct __attribute__((packed)) inject_input_cmd_t {
+    uint32_t usage;
+    int32_t value;
 };
 
 #endif
